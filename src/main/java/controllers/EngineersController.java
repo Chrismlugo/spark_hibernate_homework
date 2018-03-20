@@ -3,6 +3,7 @@ package controllers;
 import db.DBHelper;
 import models.Department;
 import models.Engineer;
+import models.Manager;
 import spark.ModelAndView;
 import spark.Request;
 import spark.Response;
@@ -43,6 +44,32 @@ public class EngineersController {
             String lastName = req.queryParams("lastName");
             int salary = Integer.parseInt(req.queryParams("salary"));
             Engineer engineer = new Engineer(firstName,lastName,salary,department);
+            DBHelper.save(engineer);
+            res.redirect("/engineers");
+            return null;
+        }, new VelocityTemplateEngine());
+
+        get("/engineers/:id/update", (req,res) ->{
+            HashMap<String,Object> model = new HashMap<>();
+            Engineer engineer = DBHelper.find(Integer.parseInt(req.params(":id")), Engineer.class);
+            List<Department> departments = DBHelper.getAll(Department.class);
+            model.put("template", "templates/engineers/update.vtl");
+            model.put("departments",departments);
+            model.put("engineer", engineer);
+            return new ModelAndView(model, "templates/layout.vtl");
+        }, new VelocityTemplateEngine());
+
+        post("/engineers/:id", (req,res) ->{
+            int departmentId = Integer.parseInt(req.queryParams("department"));
+            Department department = DBHelper.find(departmentId, Department.class);
+            String firstName = req.queryParams("firstName");
+            String lastName = req.queryParams("lastName");
+            int salary = Integer.parseInt(req.queryParams("salary"));
+            Engineer engineer = DBHelper.find(Integer.parseInt(req.params(":id")),Engineer.class);
+            engineer.setSalary(salary);
+            engineer.setDepartment(department);
+            engineer.setFirstName(firstName);
+            engineer.setLastName(lastName);
             DBHelper.save(engineer);
             res.redirect("/engineers");
             return null;
