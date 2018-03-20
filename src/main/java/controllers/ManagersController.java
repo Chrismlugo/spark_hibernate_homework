@@ -49,6 +49,18 @@ public class ManagersController {
             return null;
         }, new VelocityTemplateEngine());
 
+        get("/managers/:id", (req,res) ->{
+            HashMap<String,Object> model = new HashMap<>();
+            Manager manager = DBHelper.find(Integer.parseInt(req.params(":id")), Manager.class);
+            List<Department> departments = DBHelper.getAll(Department.class);
+            model.put("template", "templates/managers/update.vtl");
+            model.put("departments",departments);
+            model.put("manager", manager);
+            return new ModelAndView(model, "templates/layout.vtl");
+        }, new VelocityTemplateEngine());
+
+
+
 
     }
 }
