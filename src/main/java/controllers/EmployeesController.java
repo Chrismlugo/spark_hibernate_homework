@@ -16,6 +16,7 @@ import static spark.SparkBase.staticFileLocation;
 public class EmployeesController {
     public static void main(String[] args) {
         staticFileLocation("public");
+        DepartmentsController departmentsController = new DepartmentsController();
         EngineersController engineersController = new EngineersController();
         ManagersController managersController = new ManagersController();
         Seeds.seedData();
